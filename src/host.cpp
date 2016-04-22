@@ -253,6 +253,11 @@ void Host::send_packet_internal(const Packet::ptr packet)
     packet->m_last_send_time = timestamp_now();
     packet->m_send_count++;
 
+    if (packet->has_flag(PacketFlag::RELIABLE)) {
+        /* Reliable packets contribute to congestion control */
+        packet->m_peer->m_bytes_on_wire += packet->data_len();
+    }
+
     if (m_packet_listener) {
         PacketStats packet_s;
         PeerStats peer_s;

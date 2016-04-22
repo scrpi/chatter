@@ -27,9 +27,6 @@ void Protocol::send(Packet::ptr packet, bool immediate /* = false */)
     Peer* peer = packet->m_peer;
 
     if (packet->has_flag(PacketFlag::RELIABLE)) {
-        /* Reliable packets contribute to congestion control */
-        peer->m_bytes_on_wire += packet->data_len();
-
         /* Assign a sequence number for this packet and track it.*/
         ProtocolChannel& chan = peer->m_channels[packet->get_channel()];
         packet->m_sequence_num = chan.next_sequence++;
